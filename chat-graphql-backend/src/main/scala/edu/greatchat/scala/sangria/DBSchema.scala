@@ -16,7 +16,7 @@ object DBSchema {
   // code below defines mapping model  to database scheme
   class LinksTable(tag: Tag) extends Table[Link](tag, "LINKS"){
 
-    def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("ID", O.PrimaryKey, O.AutoInc)
     def url = column[String]("URL")
     def description = column[String]("DESCRIPTION")
 
@@ -30,9 +30,9 @@ object DBSchema {
     Links.schema.create,
 
     Links forceInsertAll Seq(
-      Link(1, "http://howtographql.com", "Awesome community driven GraphQL tutorial"),
-      Link(2, "http://graphql.org", "Official GraphQL webpage"),
-      Link(3, "https://facebook.github.io/graphql/", "GraphQL specification")
+      Link("1", "http://howtographql.com", "Awesome community driven GraphQL tutorial"),
+      Link("2", "http://graphql.org", "Official GraphQL webpage"),
+      Link("3", "https://facebook.github.io/graphql/", "GraphQL specification")
     )
   )
 

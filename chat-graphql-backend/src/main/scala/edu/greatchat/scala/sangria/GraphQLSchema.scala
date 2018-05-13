@@ -10,7 +10,7 @@ object GraphQLSchema {
   val LinkType = ObjectType[Unit, Link](
     "Link",
     fields[Unit, Link](
-      Field("id", IntType, resolve = _.value.id),
+      Field("id", IDType, resolve = _.value.id),
       Field("url", StringType, resolve = _.value.url),
       Field("description", StringType, resolve = _.value.description)
     )
