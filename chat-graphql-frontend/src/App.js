@@ -12,7 +12,7 @@ export default () => {
       }
     }
   `
-  const variables = {};
+  const variables = {}
   return <QueryRenderer environment={environment} query={query} variables={variables} render={App} />
 }
 
@@ -20,9 +20,8 @@ const App = ({error, props}) => {
   if (error) {
     return <div>{error.message}</div>
   } else if (props) {
-    return <div className = 'sample'>asd</div>
+    return <div className="sample">asd</div>
   } else {
     return <div>Loading</div>
   }
 }
-
