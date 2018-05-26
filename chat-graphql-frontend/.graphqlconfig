@@ -3,7 +3,7 @@
   "extensions": {
     "endpoints": {
       "production": {
-        "url": "http://localhost:8080/graphql"
+        "url": "http://localhost:3000/graphql"
       }
     }
   }
