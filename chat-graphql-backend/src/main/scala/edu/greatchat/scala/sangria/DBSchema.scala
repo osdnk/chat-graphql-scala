@@ -1,6 +1,7 @@
 package edu.greatchat.scala.sangria
 
-import edu.greatchat.scala.sangria.models._
+import edu.greatchat.scala.sangria.models.{Message, _}
+import sangria.execution.deferred.Relation
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Await
@@ -14,25 +15,54 @@ object DBSchema {
     */
 
   // code below defines mapping model  to database scheme
-  class LinksTable(tag: Tag) extends Table[Link](tag, "LINKS"){
+  class RoomsTable(tag: Tag) extends Table[Room](tag, "ROOMS"){
+    def id  = column[String]("ID", O.PrimaryKey, O.AutoInc)
+    def title = column[String]("TITLE")
+    def description = column[String]("DESCRIPTION")
+    def * = (id, title, description).mapTo[Room]
+  }
+  val Rooms = TableQuery[RoomsTable]
 
+  class MessagesTable(tag: Tag) extends Table[Message](tag, _tableName = "MESSAGES"){
+    def id = column[String]("ID", O.PrimaryKey, O.AutoInc)
+    def roomId = column[String]("ROOM_ID")
+    def content = column[String]("CONTENT")
+    def * = (id, roomId, content).mapTo[Message]
+    def roomFK = foreignKey("ROOM_ID_FK", roomId, Rooms)(_.id)
+
+  }
+  val Messages = TableQuery[MessagesTable]
+
+  val MessagesByRoomId = Relation[Message, String]("byRoom", l => Seq(l.roomId))
+
+  class LinksTable(tag: Tag) extends Table[Link](tag, "LINKS"){
     def id = column[String]("ID", O.PrimaryKey, O.AutoInc)
     def url = column[String]("URL")
     def description = column[String]("DESCRIPTION")
-
-    def * = (id, url, description) <> ((Link.apply _).tupled, Link.unapply)
-
+    def * = (id, url, description).mapTo[Link]
   }
-
   val Links = TableQuery[LinksTable]
 
   val databaseSetup = DBIO.seq(
     Links.schema.create,
-
     Links forceInsertAll Seq(
       Link("1", "http://howtographql.com", "Awesome community driven GraphQL tutorial"),
       Link("2", "http://graphql.org", "Official GraphQL webpage"),
       Link("3", "https://facebook.github.io/graphql/", "GraphQL specification")
+    ),
+
+    Rooms.schema.create,
+    Rooms forceInsertAll Seq(
+      Room("1", "General", "General room for all users"),
+      Room("2", "Scala", "Let's talk about Scala"),
+      Room("3", "Sangria", "Camila Cabello - 'Sangria wine'")
+    ),
+
+    Messages.schema.create,
+    Messages forceInsertAll Seq(
+      Message("1", "1", "Hi everyone in General Room"),
+      Message("2", "3", "Who thinks Camilla Cabello is hot?"),
+      Message("3", "3", "Oh yeah, she's definitely hot")
     )
   )
 
