@@ -60,9 +60,15 @@ object DBSchema {
 
     Messages.schema.create,
     Messages forceInsertAll Seq(
-      Message("1", "1", "Hi everyone in General Room"),
-      Message("2", "3", "Who thinks Camilla Cabello is hot?"),
-      Message("3", "3", "Oh yeah, she's definitely hot")
+      Message("1", "1", "veni"),
+      Message("2", "3", "vidi"),
+      Message("3", "3", "vici"),
+      Message("4", "1", "veni"),
+      Message("5", "3", "vidi"),
+      Message("6", "3", "vici"),
+      Message("7", "3", "per"),
+      Message("8", "3", "aspera"),
+      Message("9", "3", "at"),
     )
   )
 
