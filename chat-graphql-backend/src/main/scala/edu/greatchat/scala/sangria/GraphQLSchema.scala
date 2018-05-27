@@ -17,9 +17,9 @@ object GraphQLSchema {
       Field("description", StringType, resolve = _.value.description)
     )
   )
-  val MessageType = ObjectType[Unit, Message](
+  val MessageType = ObjectType[Context, Message](
     name = "Message",
-    fields[Unit, Message](
+    fields[Context, Message](
       Field("id", IDType, resolve = _.value.id),
       Field("roomId", StringType, resolve = _.value.roomId),
       Field("content", StringType, resolve = _.value.content)
@@ -30,13 +30,21 @@ object GraphQLSchema {
     Connection.definition[Context, Connection, Message]("Messages",
       MessageType)
 
-  val RoomType = ObjectType[Unit, Room](
+
+
+  val RoomType = ObjectType[Context, Room](
     "Room",
-    fields[Unit, Room](
+    fields[Context, Room](
       Field("id", IDType, resolve = _.value.id),
-      Field("title", StringType, resolve = _.value.title)))
+      Field("title", StringType, resolve = _.value.title),
+      Field("messages", OptionType(messageConnection),
+        arguments = Connection.Args.All,
+        resolve = c => c.ctx.dao.messageConnection(c.value.id, ConnectionArgs(c)))
+    )
+  )
 
-
+  val ConnectionDefinition(_, roomConnection) =
+    Connection.definition[Context, Connection, Room](name= "Rooms", RoomType)
 
   // 2
   val QueryType = ObjectType(
@@ -59,9 +67,12 @@ object GraphQLSchema {
         arguments = List(Argument("roomId", StringType)),
         resolve = c => c.ctx.dao.getMessagesByRoomId(c.arg[String](name="roomId"))
       ),
-      Field("messages", OptionType(messageConnection),
+      Field("rooms", OptionType(roomConnection),
         arguments = Connection.Args.All,
-        resolve = c => c.ctx.dao.messageConnection(ConnectionArgs(c)))))
+        resolve = c => c.ctx.dao.roomConnection(ConnectionArgs(c)))
+    ))
+
+
 
   // 3
   val SchemaDefinition = Schema(QueryType)

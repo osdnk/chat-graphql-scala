@@ -15,7 +15,7 @@ import ExecutionContext.Implicits.global
 class DAO(db: Database) {
   def allLinks = db.run(Links.result)
 
-  def allRooms = db.run(Rooms.result)
+  def allRooms: Future[Seq[Room]] = db.run(Rooms.result)
 
 
   def getLink(id: String): Future[Option[Link]] = db.run(
@@ -25,11 +25,12 @@ class DAO(db: Database) {
     Links.filter(_.id inSet ids).result
   )
 
-  def getMessagesByRoomId(id: String): Future[Seq[Message]] = {
+  def getMessagesByRoomId(roomId: String): Future[Seq[Message]] = {
     db.run {
-      Messages.filter(_.id === id).result
+      Messages.filter(_.roomId === roomId).result
     }
   }
+
 
 
   def getMessagesAll(): Future[Seq[Message]] = {
@@ -38,11 +39,11 @@ class DAO(db: Database) {
     }
   }
 
-  def roomConnection(connectionArgs: ConnectionArgs): Connection[Room] =
-    Connection.connectionFromSeq(roomz, connectionArgs)
+  def roomConnection(connectionArgs: ConnectionArgs): Future[Connection[Room]] =
+    Connection.connectionFromFutureSeq(allRooms, connectionArgs)
 
-  def messageConnection(connectionArgs: ConnectionArgs): Future[Connection[Message]] = {
+  def messageConnection(id: String, connectionArgs: ConnectionArgs): Future[Connection[Message]] = {
     println(connectionArgs)
-    Connection.connectionFromFutureSeq(getMessagesAll(), connectionArgs)
+    Connection.connectionFromFutureSeq(getMessagesByRoomId(id), connectionArgs)
   }
 }
