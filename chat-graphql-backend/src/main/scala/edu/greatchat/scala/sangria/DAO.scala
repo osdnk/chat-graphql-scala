@@ -1,29 +1,18 @@
 package edu.greatchat.scala.sangria
 
-import edu.greatchat.scala.sangria.DBSchema.Links
 import edu.greatchat.scala.sangria.DBSchema.Rooms
 import edu.greatchat.scala.sangria.DBSchema.Messages
 import edu.greatchat.scala.sangria.models._
 import sangria.relay._
 import slick.jdbc.H2Profile.api._
-import models.Repository.roomz
-import models.Repository.messagez
 import scala.concurrent.Future
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
 class DAO(db: Database) {
-  def allLinks = db.run(Links.result)
-
   def allRooms: Future[Seq[Room]] = db.run(Rooms.result)
 
-
-  def getLink(id: String): Future[Option[Link]] = db.run(
-    Links.filter(_.id === id).result.headOption
-  )
-  def getLinks(ids: Seq[String]) = db.run(
-    Links.filter(_.id inSet ids).result
-  )
+  def allMessages: Future[Seq[Message]] = db.run(Messages.result)
 
   def getMessagesByRoomId(roomId: String): Future[Seq[Message]] = {
     db.run {
@@ -31,19 +20,10 @@ class DAO(db: Database) {
     }
   }
 
-
-
-  def getMessagesAll(): Future[Seq[Message]] = {
-    db.run {
-      Messages.result
-    }
-  }
-
   def roomConnection(connectionArgs: ConnectionArgs): Future[Connection[Room]] =
     Connection.connectionFromFutureSeq(allRooms, connectionArgs)
 
-  def messageConnection(id: String, connectionArgs: ConnectionArgs): Future[Connection[Message]] = {
-    println(connectionArgs)
+  def messageConnectionByRoom(id: String, connectionArgs: ConnectionArgs): Future[Connection[Message]] = {
     Connection.connectionFromFutureSeq(getMessagesByRoomId(id), connectionArgs)
   }
 }

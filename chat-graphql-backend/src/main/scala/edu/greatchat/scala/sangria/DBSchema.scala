@@ -44,13 +44,6 @@ object DBSchema {
   val Links = TableQuery[LinksTable]
 
   val databaseSetup = DBIO.seq(
-    Links.schema.create,
-    Links forceInsertAll Seq(
-      Link("1", "http://howtographql.com", "Awesome community driven GraphQL tutorial"),
-      Link("2", "http://graphql.org", "Official GraphQL webpage"),
-      Link("3", "https://facebook.github.io/graphql/", "GraphQL specification")
-    ),
-
     Rooms.schema.create,
     Rooms forceInsertAll Seq(
       Room("1", "General", "General room for all users"),
