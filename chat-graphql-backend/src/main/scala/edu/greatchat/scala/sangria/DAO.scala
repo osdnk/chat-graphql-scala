@@ -4,11 +4,10 @@ import edu.greatchat.scala.sangria.DBSchema.Links
 import edu.greatchat.scala.sangria.DBSchema.Rooms
 import edu.greatchat.scala.sangria.DBSchema.Messages
 import edu.greatchat.scala.sangria.models._
-
-
-
+import sangria.relay._
 import slick.jdbc.H2Profile.api._
-
+import models.Repository.roomz
+import models.Repository.messagez
 import scala.concurrent.Future
 
 class DAO(db: Database) {
@@ -28,4 +27,13 @@ class DAO(db: Database) {
       Messages.filter(_.id === id).result
     }
   }
+
+  def roomConnection(connectionArgs: ConnectionArgs): Connection[Room] =
+    Connection.connectionFromSeq(roomz, connectionArgs)
+
+  def messageConnection(connectionArgs: ConnectionArgs): Connection[Message] = {
+    println(connectionArgs)
+    Connection.connectionFromSeq(messagez, connectionArgs)
+  }
+
 }
