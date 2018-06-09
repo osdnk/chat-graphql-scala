@@ -1,0 +1,67 @@
+type Message {
+  id: ID!
+  roomId: String!
+  content: String!
+}
+
+# A connection to a list of items.
+type MessagesConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [MessagesEdge]
+}
+
+# An edge in a connection.
+type MessagesEdge {
+  # The item at the end of the edge.
+  node: Message!
+
+  # A cursor for use in pagination.
+  cursor: String!
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+type Query {
+  messagesByRoom(roomId: String!, before: String, after: String, first: Int, last: Int): MessagesConnection
+  rooms(before: String, after: String, first: Int, last: Int): RoomsConnection
+}
+
+type Room {
+  id: ID!
+  title: String!
+  messages(before: String, after: String, first: Int, last: Int): MessagesConnection
+}
+
+# A connection to a list of items.
+type RoomsConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [RoomsEdge]
+}
+
+# An edge in a connection.
+type RoomsEdge {
+  # The item at the end of the edge.
+  node: Room!
+
+  # A cursor for use in pagination.
+  cursor: String!
+}
