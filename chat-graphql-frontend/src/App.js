@@ -1,13 +1,10 @@
 import React from 'react'
 
-import { QueryRenderer, graphql } from 'react-relay';
+import {QueryRenderer, graphql} from 'react-relay'
 
 import environment from './createRelayEnvironment'
-import RoomSelector from './Pages/RoomSelector'
-import Room from './Pages/Room'
-import {Route} from 'react-router-dom'
 
-/*export default () => {
+export default () => {
   const query = graphql`
     query AppQuery {
       allLinks {
@@ -15,13 +12,16 @@ import {Route} from 'react-router-dom'
       }
     }
   `
-  return <QueryRenderer environment={environment} query={query} render={App} />
-}*/
+  const variables = {}
+  return <QueryRenderer environment={environment} query={query} variables={variables} render={App} />
+}
 
-export default () => (
-  <div>
-    1234
-    <Route exact path="/" component={RoomSelector} />
-    <Route exact path="/room/:number" component={Room} />
-  </div>
-)
+const App = ({error, props}) => {
+  if (error) {
+    return <div>{error.message}</div>
+  } else if (props) {
+    return <div className="sample">asd</div>
+  } else {
+    return <div>Loading</div>
+  }
+}
