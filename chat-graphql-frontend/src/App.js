@@ -7,8 +7,12 @@ import environment from './createRelayEnvironment'
 export default () => {
   const query = graphql`
     query AppQuery {
-      allLinks {
-        url
+      rooms(first: 1) {
+          edges {
+              node {
+                  title
+              }
+          }
       }
     }
   `
@@ -20,6 +24,7 @@ const App = ({error, props}) => {
   if (error) {
     return <div>{error.message}</div>
   } else if (props) {
+    console.log(props)
     return <div className="sample">asd</div>
   } else {
     return <div>Loading</div>
