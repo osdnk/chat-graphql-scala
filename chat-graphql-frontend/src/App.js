@@ -49,7 +49,6 @@ class App extends React.Component {
     if (!this.props.rooms) {
       return <div>Loading</div>
     }
-    console.log(this.props)
     return (
       <div>
         Select room

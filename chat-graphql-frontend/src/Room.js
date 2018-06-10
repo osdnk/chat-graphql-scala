@@ -6,16 +6,23 @@ import environment from './createRelayEnvironment'
 
 class Room extends React.Component {
   render() {
-    console.log(this.props)
+    if (!this.props.messagesByRoom)
+      return <div/>
+    return (<div>
+      {this.props.messagesByRoom.edges.map(e =>
+        <div>
+          {e.node.content}
+        </div>
 
-    return <div />
+      )}
+    </div>)
   }
 }
 
-export default () => {
+export default ({ roomId }) => {
   const query = graphql`
-    query RoomQuery {
-      messagesByRoom(roomId: "1", first: 100) {
+    query RoomQuery($roomId: String!) {
+      messagesByRoom(roomId: $roomId, first: 100) {
         edges {
           node {
             content
@@ -24,12 +31,13 @@ export default () => {
       }
     }
   `
-  const variables = {}
   return (
     <QueryRenderer
       environment={environment}
       query={query}
-      variables={variables}
+      variables={{
+        roomId
+      }}
       render={p => React.createElement(Room, p.props)}
     />
   )
