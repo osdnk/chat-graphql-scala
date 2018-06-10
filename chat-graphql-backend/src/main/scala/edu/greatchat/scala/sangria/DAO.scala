@@ -26,4 +26,22 @@ class DAO(db: Database) {
   def messageConnectionByRoom(id: String, connectionArgs: ConnectionArgs): Future[Connection[Message]] = {
     Connection.connectionFromFutureSeq(getMessagesByRoomId(id), connectionArgs)
   }
+
+  def createMessage(roomId: String, content: String): Future[Message] = {
+    val insertAndReturnMessageQuery = (Messages returning Messages.map(_.id)) into {
+      (message, id) => message.copy(id = id)
+    }
+    db.run{
+      insertAndReturnMessageQuery += Message("", roomId, content)
+    }
+  }
+
+  def createRoom(title: String, description: String): Future[Room] = {
+    val insertAndReturnRoomQuery = (Rooms returning Rooms.map(_.id)) into {
+      (room, id) => room.copy(id = id)
+    }
+    db.run{
+      insertAndReturnRoomQuery += Room("", title, description)
+    }
+  }
 }
