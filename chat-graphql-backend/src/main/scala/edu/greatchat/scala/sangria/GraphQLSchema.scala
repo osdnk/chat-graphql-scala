@@ -11,7 +11,8 @@ object GraphQLSchema {
     fields[Context, Message](
       Field("id", IDType, resolve = _.value.id),
       Field("roomId", StringType, resolve = _.value.roomId),
-      Field("content", StringType, resolve = _.value.content)
+      Field("content", StringType, resolve = _.value.content),
+      Field("author", StringType, resolve = _.value.author)
     )
   )
 
@@ -25,6 +26,7 @@ object GraphQLSchema {
     fields[Context, Room](
       Field("id", IDType, resolve = _.value.id),
       Field("title", StringType, resolve = _.value.title),
+      Field("description", StringType, resolve = _.value.description),
       Field("messages", OptionType(messageConnection),
         arguments = Connection.Args.All,
         resolve = c => c.ctx.dao.messageConnectionByRoom(c.value.id, ConnectionArgs(c)))
@@ -47,5 +49,27 @@ object GraphQLSchema {
         resolve = c => c.ctx.dao.roomConnection(ConnectionArgs(c)))
     ))
 
-  val SchemaDefinition = Schema(QueryType)
+  val RoomIdArg = Argument("roomId", StringType)
+  val ContentArg = Argument("content", StringType)
+  val AuthorArg = Argument("author", StringType)
+  val TitleArg = Argument("title", StringType)
+  val DescriptionArg = Argument("description", StringType)
+
+  val Mutation = ObjectType(
+    "Mutation",
+    fields[Context, Unit](
+      Field("createMessage",
+        OptionType(MessageType),
+        arguments = RoomIdArg :: ContentArg :: AuthorArg :: Nil,
+        resolve = c => c.ctx.dao.createMessage(c.arg(RoomIdArg), c.arg(ContentArg), c.arg(AuthorArg))
+      ),
+      Field("createRoom",
+        OptionType(RoomType),
+        arguments = TitleArg :: DescriptionArg :: Nil,
+        resolve = c => c.ctx.dao.createRoom(c.arg(TitleArg), c.arg(DescriptionArg))
+      )
+    )
+  )
+
+  val SchemaDefinition = Schema(QueryType, Some(Mutation))
 }
