@@ -27,21 +27,14 @@ object DBSchema {
     def id = column[String]("ID", O.PrimaryKey, O.AutoInc)
     def roomId = column[String]("ROOM_ID")
     def content = column[String]("CONTENT")
-    def * = (id, roomId, content).mapTo[Message]
+    def author = column[String]("AUTHOR")
+    def * = (id, roomId, content, author).mapTo[Message]
     def roomFK = foreignKey("ROOM_ID_FK", roomId, Rooms)(_.id)
 
   }
   val Messages = TableQuery[MessagesTable]
 
   val MessagesByRoomId = Relation[Message, String]("byRoom", l => Seq(l.roomId))
-
-  class LinksTable(tag: Tag) extends Table[Link](tag, "LINKS"){
-    def id = column[String]("ID", O.PrimaryKey, O.AutoInc)
-    def url = column[String]("URL")
-    def description = column[String]("DESCRIPTION")
-    def * = (id, url, description).mapTo[Link]
-  }
-  val Links = TableQuery[LinksTable]
 
   val databaseSetup = DBIO.seq(
     Rooms.schema.create,
@@ -53,15 +46,15 @@ object DBSchema {
 
     Messages.schema.create,
     Messages forceInsertAll Seq(
-      Message("1", "1", "veni"),
-      Message("2", "1", "vidi"),
-      Message("3", "2", "vici"),
-      Message("4", "2", "veni"),
-      Message("5", "3", "vidi"),
-      Message("6", "3", "vici"),
-      Message("7", "3", "per"),
-      Message("8", "3", "aspera"),
-      Message("9", "3", "at"),
+      Message("1", "1", "veni", "Billie Jean"),
+      Message("2", "1", "vidi", "Jack Daniel's"),
+      Message("3", "2", "vici", "Cyceron"),
+      Message("4", "2", "veni", "Me"),
+      Message("5", "3", "vidi", "He"),
+      Message("6", "3", "vici", "She"),
+      Message("7", "3", "per", "It"),
+      Message("8", "3", "aspera", "Mezo"),
+      Message("9", "3", "at", "Liber"),
     )
   )
 
