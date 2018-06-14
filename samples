@@ -1,0 +1,80 @@
+{
+  rooms(first: 100) {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}
+
+
+
+{
+  rooms(first: 100) {
+    edges {
+      node {
+        id
+        title
+        messages(last: 1) {
+          edges {
+            node {
+              content
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+{
+  messagesByRoom(roomId: "2"){
+    edges{
+      node{
+        i
+      }
+    }
+  }
+}
+
+
+{
+  "data": {
+    "messagesByRoom": {
+      "edges": [
+        {
+          "node": {
+            "id": "3"
+          }
+        }
+      ]
+    }
+  }
+}
+
+mutation {
+  createRoom(title: "Scala presentation", description: "lorem ipsum") {
+    id
+  }
+}
+
+mutation {
+  createMessage(roomId: "4",content: "sibadaba", author: "James Bond") {
+    id
+  }
+}
+
+
+{
+  messagesByRoom(roomId: "4") {
+    edges {
+      node {
+        content
+      }
+    }
+  }
+}
+
